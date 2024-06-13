@@ -16,6 +16,4 @@ class FeederApplication
 
     private:
         LoadCell_HX71708 _loadCell{DOUT, DSCK};
-        
-        std::string tag = "FEEDER APP";
 };
