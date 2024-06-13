@@ -1,18 +1,36 @@
 #include <Arduino.h>
+#include <FeederApplication.h>
 
-// put function declarations here:
-int myFunction(int, int);
+struct TaskUtils
+{
+  uint16_t interval;   // Time interval in milliseconds
+  uint32_t prevMillis; // Last execution time
+};
 
-void setup() {
+void setTaskScheduler(bool (*func)(), uint16_t interval);
+
+FeederApplication app;
+
+void setup()
+{
   // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+  app.init();
 }
 
-void loop() {
+void loop()
+{
   // put your main code here, to run repeatedly:
+  setTaskScheduler([]() { return app.measureLoad(); }, 1000U);
 }
 
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+void setTaskScheduler(bool (*func)(), uint16_t interval)
+{
+  TaskUtils _task;
+  _task.interval = interval;
+  uint32_t currentMillis = millis();
+  if (currentMillis - _task.prevMillis >= _task.interval)
+  {
+    _task.prevMillis = currentMillis;
+    func(); // Call the function
+  }
 }
