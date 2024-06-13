@@ -1,18 +1,24 @@
+#define BLYNK_TEMPLATE_ID ""
+#define BLYNK_TEMPLATE_NAME ""
+
+
+#include <WiFi.h>
+#include <WiFiClient.h>
+#include <BlynkSimpleEsp32.h>
+#include <ArduinoJson.h>
+
+char ssid[] = "";
+char password[] = "";
+char auth[] = "";
+
+
 #include <Arduino.h>
 
-// put function declarations here:
-int myFunction(int, int);
-
 void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+  Serial.begin(115200);
+  Blynk.begin(auth, ssid, password);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-}
-
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+  Blynk.run();
 }
