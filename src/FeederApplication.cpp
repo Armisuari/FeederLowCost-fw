@@ -17,15 +17,13 @@ bool FeederApplication::measureLoad()
 
     if (!readLoad)
     {
-        Serial.println("failed to measure load !");
+        log_e("failed to measure load !");
         return false;
     }
 
-    float loadRaw = _loadCell.getLoadRaw();
-    float loadGram = _loadCell.getLoad();
     //need more data, Arief
     AppPreference.current().logs_devicel.ammount = _loadCell.getLoad();
-    Serial.printf("Raw load: %f\nLoad (g): %f\n", loadRaw, loadGram);
+    log_d("Raw load: %f\nLoad (g): %f\n", _loadCell.getLoadRaw(), _loadCell.getLoad());
     AppPreference.save(PREFERENCE_FEEDLOG);
     return true;
 }
@@ -35,12 +33,12 @@ bool FeederApplication::feeding(bool state)
     //only for testing thrower
     if (state)
     {
-        Serial.println("Thrower on");
+        log_i("Thrower on");
         _thrower.on();
     }
     else
     {
-        Serial.println("Thrower off");
+        log_i("Thrower off");
         _thrower.off();
     }
     return true;
