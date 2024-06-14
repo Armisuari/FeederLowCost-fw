@@ -4,6 +4,7 @@
 bool FeederApplication::init()
 {
     _loadCell.init();
+    _thrower.init();
     return true;
 }
 
@@ -21,5 +22,21 @@ bool FeederApplication::measureLoad()
     float loadGram = _loadCell.getLoad();
     Serial.printf("Raw load: %f\nLoad (g): %f\n", loadRaw, loadGram);
 
+    return true;
+}
+
+bool FeederApplication::feeding(bool state)
+{
+    //only for testing thrower
+    if (state)
+    {
+        Serial.println("Thrower on");
+        _thrower.on();
+    }
+    else
+    {
+        Serial.println("Thrower off");
+        _thrower.off();
+    }
     return true;
 }
