@@ -52,6 +52,12 @@ bool SettingsReader::load(AppSettings &settings, std::string filename)
     return true;
 }
 
+bool SettingsReader::save(std::string filename)
+{
+    bool _ret = save(currPrefs_, filename);
+    return _ret;
+}
+
 bool SettingsReader::save(AppSettings &settings, std::string filename)
 {
     auto _file = LittleFS.open(filename.c_str(), "w");
