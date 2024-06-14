@@ -4,7 +4,7 @@
 class LoadCell_HX71708
 {
 public:
-    LoadCell_HX71708(int dout, int dsck, float zeroLoad = 563152.69, float loadConstant = -0.0168);
+    LoadCell_HX71708(int dout = 17, int dsck = 16, float zeroLoad = 563152.69, float loadConstant = -0.0168);
     bool init();
     bool read(uint32_t delayTime = 100, uint8_t samplingRate = 10);
     float getLoad();
