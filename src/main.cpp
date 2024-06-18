@@ -1,9 +1,12 @@
 #include <Arduino.h>
 #include "settings/SettingsReader.h"
+#include "utils/FileUtils.h"
 #include "AppConstant.h"
 #include <FeederApplication.h>
 
 FeederApplication app;
+FileUtils fileUtils;  
+
 
 void serialCommand();
 
@@ -11,6 +14,7 @@ void setup()
 {
   // put your setup code here, to run once:
   Serial.begin(115200);
+  fileUtils.beginFileSystem();
   bool loaddedSettings = AppPreference.load(PREFERENCE_FEEDLOG);
   log_i("Settings loaded: %s", loaddedSettings ? "true" : "false");
   if(!loaddedSettings)
