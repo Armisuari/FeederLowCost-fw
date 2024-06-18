@@ -12,19 +12,19 @@ bool Thrower_relay::init()
     return true;
 }
 
-bool Thrower_relay::on()
+bool Thrower_relay::run()
 {
-    actuate(HIGH);
+    _actuate(HIGH);
     return true;
 }
 
-bool Thrower_relay::off()
+bool Thrower_relay::stop()
 {
-    actuate(LOW);
+    _actuate(LOW);
     return true;
 }
 
-void Thrower_relay::actuate(uint8_t state)
+void Thrower_relay::_actuate(uint8_t state)
 {
     digitalWrite(_pin, state);
     digitalWrite(_indicator, state);

@@ -1,21 +1,18 @@
 #pragma once
 
-#include <string>
 #include <Arduino.h>
+#include <interface/ThrowerInterface.h>
 
-class Thrower_relay
+class Thrower_relay : public ThrowerInterface
 {
     public:
         Thrower_relay(uint8_t pin = 23, uint8_t indicator = 2);
         bool init();
-        bool on();
-        bool off();
-        bool onTillWait(uint16_t waitTimeInMilliseconds);
-
-        std::string tag = "THROWER";
+        bool run();
+        bool stop();
 
     private:
-        void actuate(uint8_t state);
+        void _actuate(uint8_t state);
 
         uint8_t _pin;
         uint8_t _indicator;

@@ -3,7 +3,9 @@
 #include <Arduino.h>
 #include <ESP32Servo.h>
 
-class Gate_servo
+#include <interface/GateInterface.h>
+
+class Gate_servo : public GateInterface
 {
 public:
     explicit Gate_servo(int pin = 5) noexcept;
