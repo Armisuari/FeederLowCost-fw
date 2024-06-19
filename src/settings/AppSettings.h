@@ -36,23 +36,41 @@ struct Schedule_t
     }
 };
 
+struct LogsParam_t
+{
+    int amount;
+    int trigger;
+    int timestamp;
+};
+
 struct Logs_t
 {
-    float ammount;
-    int trigger;
+    bool success;
+    int data_count;
+    LogsParam_t data;
 
      JsonDocument toJson(){
         JsonDocument j(&PSRamAllocatorInstance);
-        j["ammount"] = ammount;
-        j["trigger"] = trigger;
+        j["success"] = success;
+        j["data_count"] = data_count;
+
+        JsonObject dataJson = j.createNestedObject("data");
+        dataJson["timestamp"] = data.timestamp;
+        dataJson["amount"] = data.amount;
+        dataJson["trigger"] = data.trigger;
+
         return j;
     }
 
-    void fromJson(const JsonDocument& data){
-        ammount = ArduinoJsonValueOr(data, "ammount", 1.0f);
-        trigger = ArduinoJsonValueOr(data, "trigger", 0);
+    void fromJson(const JsonDocument& _data){
+        success = ArduinoJsonValueOr(_data, "success", 0);
+        data_count = ArduinoJsonValueOr(_data, "data_count", 0);
+        data.timestamp = ArduinoJsonValueOr(_data, "timestamp", 0);
+        data.amount = ArduinoJsonValueOr(_data, "amount", 0);
+        data.trigger = ArduinoJsonValueOr(_data, "trigger", 0);
     }
 };
+
 
 struct AppSettings
 {
