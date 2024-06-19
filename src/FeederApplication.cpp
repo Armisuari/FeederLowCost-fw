@@ -23,29 +23,29 @@ bool FeederApplication::measureLoad()
 
 bool FeederApplication::feed(bool &state, FeedingMode fm)
 {
-    Logs_t *log = &AppPreference.current().logs_devicel;
+    AppSettings* settings = &AppPreference.current();
     while (state)
     {
-        log->data.trigger += 1;
-        bool _res = _act.processCommand(fm);
+        settings->trigger += 1;
+        bool success = _act.processCommand(fm);
 
-        if (_res)
-        {
-            log->success = true;
-            log->data_count += 1;
-            log->data.timestamp = 3423523; // dummy
-            log->data.amount = fm;
-        }
-        else
-        {
-            log->success = false;
-        }
+        Serial.printf("data trigger feed %d\n", settings->trigger);
 
-        if (log->success || log->data.trigger >= triggOut)
+        // Store results in AppSettings
+        settings->success = true;
+        settings->dataCount += 1;  
+        settings->timestamp = 312321321;   // Get current Unix timestamp
+        settings->amount = static_cast<int>(fm); // Convert FeedingMode to int
+        
+        Serial.printf("data from feed timestamp: %d\n", settings->timestamp);
+
+        // Check for success or trigger limit
+        if (success || settings->trigger >= triggOut)
         {
-            AppPreference.save(PREFERENCE_FEEDLOG);
-            log->data.trigger = 0;
-            state = false;
+            // Save settings and reset trigger
+            AppPreference.save(PREFERENCE_FEEDLOG);  
+            settings->trigger = 0;
+            state = false; 
         }
     }
 
