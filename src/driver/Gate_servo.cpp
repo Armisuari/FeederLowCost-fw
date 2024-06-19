@@ -20,5 +20,5 @@ bool Gate_servo::open(int percent) noexcept
 
 int Gate_servo::percentToDegree(int percent) noexcept
 {
-    return map(percent, 0, 100, 0, 180);
+    return map(percent, 0, 100, 0, 35);
 }
