@@ -50,7 +50,7 @@ static void listDir(FS &fs, const char *dirname, uint8_t levels) {
 bool FileUtils::beginFileSystem()
 {
     Serial.println("Starting littlefs");
-    if(!LittleFS.begin(1, "/littlefs", 20, "data")){
+    if(!LittleFS.begin(1, "/littlefs")){
         Serial.println("Failed mount littlefs");
         return false;
     }
