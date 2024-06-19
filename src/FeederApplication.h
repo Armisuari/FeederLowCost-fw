@@ -2,30 +2,43 @@
 
 #include <Arduino.h>
 
+#include <interface/LoadCell_Interface.h>
 #include <interface/GateInterface.h>
 #include <interface/ThrowerInterface.h>
 
-#include <driver/LoadCell_HX71708.h>
-
 #include <system/Actuator.h>
+
+typedef struct
+{
+    int timestamp;
+    int amount;
+    int trigger;
+} FeedParam;
+
+typedef struct
+{
+    bool succes;
+    int data_count;
+    FeedParam data;
+} FeedLogsParam;
 
 class FeederApplication
 {
-    public :
-        FeederApplication(GateInterface &gate, ThrowerInterface &thrower);
-        bool init();
-        bool measureLoad();
-        bool feeding();
+public:
+    FeederApplication(LoadCell_Interface &lc, GateInterface &gate, ThrowerInterface &thrower);
+    bool init();
+    bool measureLoad();
+    bool feed(bool &state, FeedingMode fm);
 
-        bool throwerTest(bool state);
-        // bool gateTest(uint16_t percent);
+    bool throwerTest(bool state);
 
-    private:
-        GateInterface &_gate;
-        ThrowerInterface &_thrower;
+private:
+    LoadCell_Interface &_lc;
+    GateInterface &_gate;
+    ThrowerInterface &_thrower;
 
-        LoadCell_HX71708 _loadCell;
+    const int triggOut = 5;
 
-    public:
-        Actuator _act{_gate, _thrower};
+public:
+    Actuator _act{_lc, _gate, _thrower};
 };
