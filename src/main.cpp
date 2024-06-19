@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "settings/SettingsReader.h"
+#include "utils/FileUtils.h"
 #include "AppConstant.h"
 
 #include <FeederApplication.h>
@@ -12,6 +13,8 @@ Gate_servo servo;
 Thrower_relay relay;
 
 FeederApplication app(hx71708, servo, relay);
+FileUtils fileUtils;  
+
 
 void serialCommand();
 
@@ -22,6 +25,15 @@ void setup()
 {
   // put your setup code here, to run once:
   Serial.begin(115200);
+  fileUtils.beginFileSystem();
+  bool loaddedSettings = AppPreference.load(PREFERENCE_FEEDLOG);
+  log_i("Settings loaded: %s", loaddedSettings ? "true" : "false");
+  if(!loaddedSettings)
+  {
+    log_e("Feedlogs doesnt exist, create a new one");
+    AppPreference.save(PREFERENCE_FEEDLOG);
+    esp_restart();
+  }
   app.init();
 }
 

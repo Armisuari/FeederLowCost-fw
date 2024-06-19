@@ -6,6 +6,21 @@ SettingsReader::SettingsReader()
 {
 }
 
+void AppSettings::parseJSON(const std::string &payload)
+{
+    try
+    {
+        JsonDocument data(&PSRamAllocatorInstance);
+        deserializeJson(data, payload);
+        fromJson(data);
+    }
+    catch (const std::exception &e)
+    {
+        Serial.print("JSON processing error: ");
+        Serial.println(e.what());
+    }
+}
+
 bool SettingsReader::load(std::string filename)
 {
     bool _ret = load(currPrefs_, filename);
@@ -86,3 +101,5 @@ bool SettingsReader::save(AppSettings &settings, std::string filename)
     _file.close();
     return true;
 }
+
+SettingsReader AppPreference;
