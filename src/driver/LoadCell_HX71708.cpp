@@ -40,19 +40,20 @@ bool LoadCell_HX71708::read(uint32_t delayTime, uint8_t samplingRate)
     return true;
 }
 
-float LoadCell_HX71708::getLoad()
+float LoadCell_HX71708::readLoad()
 {
+    read();
     return lsbToGram();
 }
 
-float LoadCell_HX71708::getLoadRaw() const
+float LoadCell_HX71708::readRaw()
 {
+    read();
     return _measurementLoad;
 }
 
 float LoadCell_HX71708::getUncertainty() const
 {
-
     return _measurementUncertainty;
 }
 
