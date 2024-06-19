@@ -8,20 +8,6 @@
 
 #include <system/Actuator.h>
 
-typedef struct
-{
-    int timestamp;
-    int amount;
-    int trigger;
-} FeedParam;
-
-typedef struct
-{
-    bool succes;
-    int data_count;
-    FeedParam data;
-} FeedLogsParam;
-
 class FeederApplication
 {
 public:
