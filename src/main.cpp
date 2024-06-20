@@ -1,12 +1,19 @@
 #include <Arduino.h>
 #include "settings/SettingsReader.h"
 #include "utils/FileUtils.h"
+#include <WiFi.h>
+#include <WiFiClient.h>
 #include "AppConstant.h"
+#include <BlynkSimpleEsp32.h>
 
 #include <FeederApplication.h>
 #include <driver/LoadCell_HX71708.h>
 #include <driver/Gate_servo.h>
 #include <driver/Thrower_relay.h>
+
+char auth[] = BLYNK_AUTH_TOKEN;
+char ssid[] = "";
+char pass[] = "";
 
 LoadCell_HX71708 hx71708;
 Gate_servo servo;
@@ -25,6 +32,7 @@ void setup()
 {
   // put your setup code here, to run once:
   Serial.begin(115200);
+  Blynk.begin(auth, ssid, pass);
   fileUtils.beginFileSystem();
   bool loaddedSettings = AppPreference.load(PREFERENCE_FEEDLOG);
   log_i("Settings loaded: %s", loaddedSettings ? "true" : "false");
@@ -37,8 +45,39 @@ void setup()
   app.init();
 }
 
+BLYNK_WRITE(V0)
+{
+  int value = param.asInt();
+  if(value == 1)
+  {
+    isFeeding = true;
+    fm = MINIMUM;
+  }
+}
+
+BLYNK_WRITE(V1)
+{
+  int value = param.asInt();
+  if(value == 1)
+  {
+    isFeeding = true;
+    fm = MEDIUM;
+  }
+}
+
+BLYNK_WRITE(V2)
+{
+  int value = param.asInt();
+  if(value == 1)
+  {
+    isFeeding = true;
+    fm = MAXIMUM;
+  }
+}
+
 void loop()
 {
+  Blynk.run();
   // put your main code here, to run repeatedly:
   serialCommand();
 

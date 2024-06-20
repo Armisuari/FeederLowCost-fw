@@ -13,6 +13,8 @@
 constexpr auto PREFERENCE_FILENAME = "/preference.json";
 constexpr auto PREFERENCE_FEEDLOG = "/feedlog.json";
 
-#define BLYNK_TEMPLATE_ID ""
-#define BLYNK_DEVICE_NAME ""
-#define BLYNK_AUTH_TOKEN ""
+#define BLYNK_TEMPLATE_ID "TMPL6kFdORTCW"
+#define BLYNK_TEMPLATE_NAME "test1"
+#define BLYNK_AUTH_TOKEN "smd97NimOfGmKruLxlj5gkhOJbP9YbcZ"
+
+
