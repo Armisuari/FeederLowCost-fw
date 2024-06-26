@@ -8,11 +8,11 @@ class LoadCell_HX71708 : public LoadCell_Interface
 public:
     LoadCell_HX71708(int dout = 17, int dsck = 16, float zeroLoad = 563152.69, float loadConstant = -0.0168);
     bool init();
-    float readLoad();
-    float readRaw();
+    bool read(uint32_t delayTime = 100, uint8_t samplingRate = 10);
+    float getLoad();
+    float getRaw();
 
 private:
-    bool read(uint32_t delayTime = 100, uint8_t samplingRate = 10);
     float getUncertainty() const;
     void calculateUncertainty(const int32_t *samples);
     int32_t readDriver(uint16_t samplingRate);
