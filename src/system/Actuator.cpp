@@ -4,70 +4,95 @@ Actuator::Actuator(LoadCell_Interface &lc, GateInterface &gate, ThrowerInterface
 {
 }
 
-bool Actuator::processCommand(FeedingMode &fm)
+bool Actuator::processCommand(FeedingMode &fm, FeedingState &fs)
 {
-    float curLoad = _lc.readRaw();
-    bool _res = handleFeedingMode(fm, curLoad);
+    log_d("Received command");
+    bool inProcess = handleFeedingMode(fm);
 
-    if (!_res)
+    log_d("inProcess = %s", inProcess ? "true" : "false");
+    fs = inProcess ? FeedingState::PROCESS : FeedingState::FAILED;
+
+    if (currentCycle >= cycleCount)
     {
-        log_e("failed to process feed command");
-        return false;
+        resetCycle();
+        _gate.open(5);
+        _thrower.stop();
+        fs = FeedingState::SUCCESS;
     }
 
     return true;
 }
 
-bool Actuator::handleFeedingMode(FeedingMode fm, float prevLoad)
+bool Actuator::handleFeedingMode(FeedingMode fm)
 {
-    int gatePosition;
-    const char *logMessage;
-
     switch (fm)
     {
-    case MINIMUM:
-        gatePosition = 35;
-        logMessage = "Feed with minimum amount";
+    case FeedingMode::LOW_DOSE:
+        gatePosition = 32; // Percent open for low dose
+        cycleCount = lowDuration / period * 2 + 2;
+        logDuration(fm, lowDuration);
         break;
-    case MEDIUM:
-        gatePosition = 75;
-        logMessage = "Feed with medium amount";
-        break;
-    case MAXIMUM:
-        gatePosition = 95;
-        logMessage = "Feed with maximum amount";
+    case FeedingMode::HIGH_DOSE:
+        gatePosition = 35; // Percent open for high dose
+        cycleCount = highDuration / period * 2 + 2;
+        logDuration(fm, highDuration);
         break;
     }
 
-    log_d("%s", logMessage);
-    _gate.open(gatePosition);
-    delay(100);
+    static bool cycleLapsed = false;
 
-    if (!isDispensing(prevLoad))
+    // Perform the action based on the current state
+    if (gateState == 0)
     {
-        log_w("Thrower doesn't run");
-        _thrower.stop();
+        log_d("Gate open");
+        _gate.open(gatePosition);
+        gateState = 1; // Move to the next state
+        cycleLapsed = false;
+    }
+    else if (gateState == 1)
+    {
+        log_d("Gate close");
+        _gate.open(5); // Close the gate
+        gateState = 0; // Move back to the initial state
+        cycleLapsed = true;
+    }
+
+    log_d("Cycle count = %d", cycleCount);
+    log_d("current cycle = %d", currentCycle);
+
+    if (!isDispensing())
+    {
         return false;
     }
-    else
-    {
-        while (isDispensing(prevLoad))
-        {
-            log_i("Throwing feed");
-            _thrower.run();
-        }
-    }
 
-    log_i("feeding process done");
-    _thrower.stop();
+    if (cycleLapsed)
+        currentCycle++; // Increment the cycle count
+    log_i("Throwing feed");
+    _thrower.run();
 
     return true;
 }
 
-bool Actuator::isDispensing(float prevLoad)
+void Actuator::resetCycle()
 {
-    delay(100);
-    float curLoad = _lc.readRaw();
-    // return curLoad > prevLoad;
-    return curLoad > prevLoad + 10000.0;
+    currentCycle = 0;
+    gateState = 0;
+}
+
+void Actuator::logDuration(FeedingMode fm, int duration)
+{
+    int durationInMinutes = duration / 60;
+    if (fm == LOW_DOSE)
+    {
+        log_i("Feed with low amount takes duration for %d minutes", durationInMinutes);
+    }
+    else if (fm == HIGH_DOSE)
+    {
+        log_i("Feed with maximum amount takes duration for %d minutes", durationInMinutes);
+    }
+}
+
+bool Actuator::isDispensing()
+{
+    return _lc.getLoad() < 4200;
 }
