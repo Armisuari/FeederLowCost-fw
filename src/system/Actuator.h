@@ -13,7 +13,7 @@ typedef enum
 } FeedingMode;
 
 typedef enum {
-    PROCESS,
+    IDLE,
     SUCCESS,
     FAILED
 }FeedingState;

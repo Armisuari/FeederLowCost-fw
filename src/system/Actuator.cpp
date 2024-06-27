@@ -10,7 +10,7 @@ bool Actuator::processCommand(FeedingMode &fm, FeedingState &fs)
     bool inProcess = handleFeedingMode(fm);
 
     log_d("inProcess = %s", inProcess ? "true" : "false");
-    fs = inProcess ? FeedingState::PROCESS : FeedingState::FAILED;
+    fs = inProcess ? FeedingState::IDLE : FeedingState::FAILED;
 
     if (currentCycle >= cycleCount)
     {

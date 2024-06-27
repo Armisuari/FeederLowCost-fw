@@ -1,5 +1,10 @@
 #pragma once
 
+#include <memory>
+#include <atomic>
+#include <thread>
+#include <chrono>
+
 #include <Arduino.h>
 
 #include <interface/LoadCell_Interface.h>
@@ -16,14 +21,17 @@ public:
     bool measureLoad();
     bool feed(bool &state, FeedingMode fm);
 
-    bool throwerTest(bool state);
-
 private:
     LoadCell_Interface &_lc;
     GateInterface &_gate;
     ThrowerInterface &_thrower;
 
-    const int triggOut = 5;
+    void taskSensor();
+
+    std::atomic<bool> _running{true};
+    std::thread _sensorThread;
+
+    static constexpr int triggOut = 5;
 
 public:
     Actuator _act{_lc, _gate, _thrower};
