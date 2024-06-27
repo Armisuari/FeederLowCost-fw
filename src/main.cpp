@@ -46,13 +46,6 @@ void loop()
   {
     app.feed(isFeeding, fm);
   }
-
-  static uint32_t lastUpadate = 0;
-  if (millis() - lastUpadate >= 1000U)
-  {
-    lastUpadate = millis();
-    app.measureLoad();
-  }
 }
 
 void serialCommand()
@@ -71,23 +64,18 @@ void serialCommand()
     {
       // feed
       isFeeding = true;
-      fm = MINIMUM;
+      fm = LOW_DOSE;
     }
     else if (input == "feed2")
     {
       isFeeding = true;
-      fm = MEDIUM;
+      fm = HIGH_DOSE;
     }
-    else if (input == "feed3")
+    else if (input == "feed0")
     {
-      isFeeding = true;
-      fm = MAXIMUM;
+      // stop
+      isFeeding = false;
     }
-    // else if (input == "feed0")
-    // {
-    //   // stop
-    //   isFeeding = false;
-    // }
     else
     {
       log_e("invalid command");
